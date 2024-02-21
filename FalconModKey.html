@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FalconMod</title>
+    <style>
+        .tabcontent {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Генератор ключей</h1>
+
+    <!-- Форма для ввода логина и пароля -->
+    <label for="username">Логин:</label>
+    <input type="text" id="username"><br><br>
+    <label for="password">Пароль:</label>
+    <input type="password" id="password"><br><br>
+    <button onclick="login()">Войти</button><br><br>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'generate')">Сгенерировать</button>
+        <button class="tablinks" onclick="openTab(event, 'keys')">Ключи</button>
+    </div>
+
+    <!-- Вкладка "Сгенерировать" -->
+    <div id="generate" class="tabcontent">
+        <h2>Сгенерировать ключ</h2>
+        <label for="key">Ключ:</label>
+        <input type="text" id="key" readonly><br><br>
+        <label for="duration">Срок (часы):</label>
+        <input type="number" id="duration" min="1" value="1"><br><br>
+        <label for="devices">Количество девайсов:</label>
+        <input type="number" id="devices" min="1" value="1"><br><br>
+        <button onclick="generateKey()">Сгенерировать ключ</button>
+    </div>
+
+    <!-- Вкладка "Ключи" -->
+    <div id="keys" class="tabcontent">
+        <h2>Список ключей</h2>
+        <table id="keysTable">
+            <tr>
+                <th>Ключ</th>
+                <th>Срок действия (часы)</th>
+                <th>Количество девайсов</th>
+                <th>Статус</th>
+            </tr>
+            <!-- Здесь будут добавляться сгенерированные ключи -->
+        </table>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function login() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            // Предположим, что логин и пароль являются admin/admin
+            if (username === "FalconKey" && password === "FalkonKey") {
+                // Если логин и пароль верные, отображаем вкладку "Сгенерировать" и "Ключи"
+                document.getElementById("generate").style.display = "block";
+                document.getElementById("keys").style.display = "block";
+            } else {
+                // Если логин и пароль неверные, выводим сообщение об ошибке
+                alert("Неверный логин или пароль");
+            }
+        }
+
+        function generateKey() {
+            var keyField = document.getElementById("key");
+            var durationField = document.getElementById("duration");
+            var devicesField = document.getElementById("devices");
+
+            // Генерация случайных символов
+            var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var randomChars = '';
+            for (var i = 0; i < 6; i++) {
+                randomChars += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+
+            // Получение данных о сроке и количестве устройств
+            var duration = durationField.value;
+            var devices = devicesField.value;
+
+            // Формирование ключа
+            var key = "FalconMod-" + duration + "-" + randomChars;
+
+            // Добавление ключа в таблицу
+            var table = document.getElementById("keysTable");
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            cell1.innerHTML = key;
+            cell2.innerHTML = duration;
+            cell3.innerHTML = devices;
+            cell4.innerHTML = '<button onclick="activateKey(this)">Активировать</button>';
+
+            // Установка таймера для удаления ключа
+            setTimeout(function() {
+                table.deleteRow(row.rowIndex);
+            }, duration * 3600000); // Преобразование часов в миллисекунды
+        }
+
+        function activateKey(button) {
+            var row = button.parentNode.parentNode;
+            row.style.backgroundColor = "lightgreen";
+            button.parentNode.innerHTML = "Активирован";
+        }
+    </script>
+</body>
+</html>
